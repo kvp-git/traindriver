@@ -51,10 +51,10 @@ public class RadioCircuitCubeBTLE implements RadioInterface, BtLECallbacks
     @Override
     public boolean setChannels(Context context)
     {
-        Log.e("RuningActivity", "sending updates for " + deviceDescriptor.address);
-        byte cmd[] = new byte[15];
+        Log.e("RunningActivity", "sending updates for " + deviceDescriptor.address);
         if (deviceController.channels.length < 3)
             return false;
+        byte cmd[] = new byte[15];
         for (int t = 0; t < 3; t++)
         {
             int v = deviceController.channels[t];
