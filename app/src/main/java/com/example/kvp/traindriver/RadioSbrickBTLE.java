@@ -93,4 +93,10 @@ public class RadioSbrickBTLE implements RadioInterface, BtLECallbacks
     {
         // good (nop)
     }
+
+    @Override
+    public void dataChanged(int characteristicNum, byte[] value)
+    {
+        // TODO!!!
+    }
 }

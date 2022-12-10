@@ -103,6 +103,14 @@ public class BtLE
                 // TODO!!! status and error handling
                 btLECallbacks.writeDone(status);
             }
+
+            @Override
+            public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic)
+            {
+                //Log.d("BtLE", "onCharacteristicChanged()");
+                int num = -1; // TODO!!! look up the right characteristic number
+                btLECallbacks.dataChanged(num, characteristic.getValue());
+            }
         };
         btGatt = btDevice.connectGatt(context, true, btGattCallback, BluetoothDevice.TRANSPORT_LE);
         return btGatt.connect();
@@ -151,6 +159,15 @@ public class BtLE
         if (gattCharacteristics[characteristicNum] == null)
             return false;
         return btGatt.readCharacteristic(gattCharacteristics[characteristicNum]);
+    }
+
+    public boolean setNotify(int characteristicNum)
+    {
+        if (gattCharacteristics.length <= characteristicNum)
+            return false;
+        if (gattCharacteristics[characteristicNum] == null)
+            return false;
+        return btGatt.setCharacteristicNotification(gattCharacteristics[characteristicNum], true);
     }
 
 }

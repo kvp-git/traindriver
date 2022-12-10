@@ -7,6 +7,7 @@ public class DeviceController
 {
     public DeviceDescriptor deviceDescriptor;
     public int channels[];
+    public float batteryVoltage;
     public int chargePercent;
     public boolean isConnected;
     public RadioInterface radio;
@@ -14,6 +15,7 @@ public class DeviceController
     public DeviceController(Context context, DeviceDescriptor deviceDescriptor)
     {
         this.deviceDescriptor = deviceDescriptor;
+        batteryVoltage = 0;
         chargePercent = -1;
         isConnected = false;
         switch(deviceDescriptor.protocol.toLowerCase())

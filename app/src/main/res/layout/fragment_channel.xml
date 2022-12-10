@@ -10,7 +10,7 @@
         android:id="@+id/channelDirectionButton"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
-        android:text="STOP"
+        android:text=""
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"/>
 

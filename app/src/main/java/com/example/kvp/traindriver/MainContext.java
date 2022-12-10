@@ -24,7 +24,7 @@ public class MainContext
         devices = new HashMap<>();
         devices.put(0, new DeviceController(context, new DeviceDescriptor("test1", "sbrick_btle", "00:11:22:33:FF:EE", 4, "A,B,C,D")));
         devices.put(1, new DeviceController(context, new DeviceDescriptor("test2", "circuitcube_btle", "FC:58:FA:CF:62:70", 3, "A,B,C")));
-        devices.put(2, new DeviceController(context, new DeviceDescriptor("test3", "circuitcube_btle", "42:11:22:33:FF:EE", 2, "AC,B")));
+        devices.put(2, new DeviceController(context, new DeviceDescriptor("test3", "circuitcube_btle", "FC:58:FA:CF:62:70", 2, "AC,B")));
     }
 
     public DeviceController getDeviceControllerById(int id)

@@ -73,6 +73,8 @@ public class RunningDeviceAdapter extends RecyclerView.Adapter<RunningDeviceAdap
             SeekBar speedBar = chView.findViewById(R.id.channelValueBar);
             Button dirButton = chView.findViewById(R.id.channelDirectionButton);
             speedBar.setProgress(dc.channels[t]);
+            dirButton.setText("Stop");
+            speedBar.setEnabled(false);
             final int channelNum = t;
             dirButton.setOnClickListener(view ->
             {
@@ -82,12 +84,15 @@ public class RunningDeviceAdapter extends RecyclerView.Adapter<RunningDeviceAdap
                     case 0:
                     case 2:
                         dirButton.setText("Stop");
+                        speedBar.setEnabled(false);
                         break;
                     case 1:
                         dirButton.setText("Forward");
+                        speedBar.setEnabled(true);
                         break;
                     case 3:
                         dirButton.setText("Reverse");
+                        speedBar.setEnabled(true);
                         break;
                 }
                 speedBar.setProgress(0);

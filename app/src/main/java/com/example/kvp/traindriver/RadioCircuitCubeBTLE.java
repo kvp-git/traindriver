@@ -23,12 +23,16 @@ public class RadioCircuitCubeBTLE implements RadioInterface, BtLECallbacks
 {
     DeviceDescriptor deviceDescriptor;
     DeviceController deviceController;
+    boolean speedSentFlag;
+    boolean batterySentFlag;
     BtLE btLE;
 
     public RadioCircuitCubeBTLE(Context context, DeviceDescriptor deviceDescriptor, DeviceController deviceController)
     {
         this.deviceDescriptor = deviceDescriptor;
         this.deviceController = deviceController;
+        speedSentFlag = false;
+        batterySentFlag = false;
         btLE = new BtLE(context, this);
     }
 
@@ -51,14 +55,14 @@ public class RadioCircuitCubeBTLE implements RadioInterface, BtLECallbacks
     @Override
     public boolean setChannels(Context context)
     {
-        Log.e("RunningActivity", "sending updates for " + deviceDescriptor.address);
+        Log.d("RadioCircuitCubeBTLE", "sending updates for " + deviceDescriptor.address);
         if (deviceController.channels.length < 3)
             return false;
         byte cmd[] = new byte[15];
         for (int t = 0; t < 3; t++)
         {
             int v = deviceController.channels[t];
-            Log.e("RunningActivity", "channel=" + t + " value=" + v);
+            //Log.d("RunningActivity", "channel=" + t + " value=" + v);
             cmd[t * 5 + 0] = (byte)((v < 0) ? '-' : '+');
             if (v < 0)
                 v *= -1;
@@ -70,7 +74,8 @@ public class RadioCircuitCubeBTLE implements RadioInterface, BtLECallbacks
         StringBuffer sb = new StringBuffer();
         for (int t = 0; t < 15; t++)
             sb.append((char)cmd[t]);
-        Log.e("RunningActivity", "data: " + sb.toString());
+        Log.i("RadioCircuitCubeBTLE", "data: " + sb.toString());
+        speedSentFlag = true;
         return btLE.writeCommand(0, cmd);
     }
 
@@ -86,6 +91,7 @@ public class RadioCircuitCubeBTLE implements RadioInterface, BtLECallbacks
     public void connected()
     {
         deviceController.isConnected = true;
+        btLE.setNotify(1);
     }
 
     @Override
@@ -97,12 +103,51 @@ public class RadioCircuitCubeBTLE implements RadioInterface, BtLECallbacks
     @Override
     public void readDone(int status, int characteristicNum, byte[] value)
     {
-        // TODO!!! process battery charge
     }
 
     @Override
     public void writeDone(int status)
     {
-        btLE.readResult(1);
+        if (speedSentFlag)
+        {
+            speedSentFlag = false;
+            batterySentFlag = true;
+            byte[] cmd = new byte[1];
+            cmd[0] = 'b';
+            btLE.writeCommand(0, cmd);
+        } else if (batterySentFlag)
+        {
+            batterySentFlag = false;
+        }
+    }
+
+    @Override
+    public void dataChanged(int characteristicNum, byte[] value)
+    {
+        if (value.length < 1)
+            return;
+        if (value[0] == 0x00) // filter out speed command ack-s
+            return;
+        StringBuffer sb = new StringBuffer();
+        for(int t = 0; t < value.length; t++)
+            sb.append((char)value[t]);
+        String batteryString = sb.toString();
+        try
+        {
+            //Log.d("RadioCircuitCubeBTLE", "new data: " + batteryString);
+            float batteryVoltage = Float.parseFloat(batteryString);
+            deviceController.batteryVoltage = batteryVoltage;
+            if ((batteryVoltage >= 3.00) && (batteryVoltage <= 4.2))
+                deviceController.chargePercent = (int)(((batteryVoltage - 3.0) * 100.0) / 1.2);
+            else if (batteryVoltage > 4.2)
+                deviceController.chargePercent = 100;
+            else
+                deviceController.chargePercent = 0;
+            Log.e("RadioCircuitCubeBTLE", "battery=" + deviceController.chargePercent + "%");
+        } catch (Exception e)
+        {
+            Log.e("RadioCircuitCubeBTLE", "Exception: " + e.toString(), e);
+        }
+
     }
 }
