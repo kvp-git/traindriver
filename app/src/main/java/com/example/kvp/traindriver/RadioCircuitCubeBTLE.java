@@ -143,7 +143,7 @@ public class RadioCircuitCubeBTLE implements RadioInterface, BtLECallbacks
                 deviceController.chargePercent = 100;
             else
                 deviceController.chargePercent = 0;
-            Log.e("RadioCircuitCubeBTLE", "battery=" + deviceController.chargePercent + "%");
+            Log.e("RadioCircuitCubeBTLE", "battery=" + deviceController.batteryVoltage + "V " + deviceController.chargePercent + "%");
         } catch (Exception e)
         {
             Log.e("RadioCircuitCubeBTLE", "Exception: " + e.toString(), e);
