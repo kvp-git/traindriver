@@ -23,15 +23,18 @@ public class RunningDeviceAdapter extends RecyclerView.Adapter<RunningDeviceAdap
     {
         public TextView tvName;
         public TextView tvAddress;
+        public TextView tvInfo;
         public Button bConnect;
         public LinearLayout llChannels;
         public int[] directionCycles;
+        public boolean isConnected;
 
         public ViewHolder(View view)
         {
             super(view);
             tvName = view.findViewById(R.id.fragmentDeviceName);
             tvAddress = view.findViewById(R.id.fragmentDeviceAddress);
+            tvInfo = view.findViewById(R.id.fragmentDeviceInfo);
             bConnect = view.findViewById(R.id.fragmentDeviceConnect);
             llChannels = view.findViewById(R.id.fragmentChannelList);
         }
@@ -58,6 +61,8 @@ public class RunningDeviceAdapter extends RecyclerView.Adapter<RunningDeviceAdap
         int channelCount = dc.deviceDescriptor.channelCount;
         viewHolder.tvName.setText(dc.deviceDescriptor.name);
         viewHolder.tvAddress.setText(dc.deviceDescriptor.protocol  + ":" + dc.deviceDescriptor.address);
+        viewHolder.isConnected = false;
+        viewHolder.bConnect.setText("Connect");
         viewHolder.bConnect.setOnClickListener(view ->
         {
             if (!dc.isConnected)
@@ -123,6 +128,25 @@ public class RunningDeviceAdapter extends RecyclerView.Adapter<RunningDeviceAdap
                 @Override
                 public void onStopTrackingTouch(SeekBar seekBar)
                 {
+                }
+            });
+            dc.isChanged.observeForever(isChanged ->
+            {
+                if (dc.chargePercent == -1)
+                {
+                    viewHolder.tvInfo.setText("");
+                } else
+                {
+                  String info = "" + dc.batteryVoltage + "V " + dc.chargePercent + "%";
+                    viewHolder.tvInfo.setText(info);
+                }
+                if (dc.isConnected != viewHolder.isConnected)
+                {
+                    viewHolder.isConnected = dc.isConnected;
+                    if (viewHolder.isConnected)
+                        viewHolder.bConnect.setText("Disconnect");
+                    else
+                        viewHolder.bConnect.setText("Connect");
                 }
             });
         }

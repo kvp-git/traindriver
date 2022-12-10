@@ -1,5 +1,6 @@
 package com.example.kvp.traindriver;
 
+import android.arch.lifecycle.MutableLiveData;
 import android.content.Context;
 import android.util.Log;
 
@@ -11,6 +12,7 @@ public class DeviceController
     public int chargePercent;
     public boolean isConnected;
     public RadioInterface radio;
+    public MutableLiveData<Boolean> isChanged;
 
     public DeviceController(Context context, DeviceDescriptor deviceDescriptor)
     {
@@ -18,6 +20,7 @@ public class DeviceController
         batteryVoltage = 0;
         chargePercent = -1;
         isConnected = false;
+        isChanged = new MutableLiveData<>();
         switch(deviceDescriptor.protocol.toLowerCase())
         {
             case "sbrick_btle":

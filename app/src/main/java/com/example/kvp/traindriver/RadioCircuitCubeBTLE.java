@@ -92,12 +92,14 @@ public class RadioCircuitCubeBTLE implements RadioInterface, BtLECallbacks
     {
         deviceController.isConnected = true;
         btLE.setNotify(1);
+        deviceController.isChanged.postValue(true);
     }
 
     @Override
     public void disconnected()
     {
         deviceController.isConnected = false;
+        deviceController.isChanged.postValue(true);
     }
 
     @Override
@@ -134,16 +136,20 @@ public class RadioCircuitCubeBTLE implements RadioInterface, BtLECallbacks
         String batteryString = sb.toString();
         try
         {
+            int c0 = deviceController.chargePercent;
+            float v0 = deviceController.batteryVoltage;
             //Log.d("RadioCircuitCubeBTLE", "new data: " + batteryString);
             float batteryVoltage = Float.parseFloat(batteryString);
             deviceController.batteryVoltage = batteryVoltage;
-            if ((batteryVoltage >= 3.00) && (batteryVoltage <= 4.2))
-                deviceController.chargePercent = (int)(((batteryVoltage - 3.0) * 100.0) / 1.2);
+            if ((batteryVoltage >= 3.6) && (batteryVoltage <= 4.2))
+                deviceController.chargePercent = (int)(((batteryVoltage - 3.6) * 100.0) / 0.6);
             else if (batteryVoltage > 4.2)
                 deviceController.chargePercent = 100;
             else
                 deviceController.chargePercent = 0;
             Log.e("RadioCircuitCubeBTLE", "battery=" + deviceController.batteryVoltage + "V " + deviceController.chargePercent + "%");
+            if ((c0 != deviceController.chargePercent) || (v0 != deviceController.batteryVoltage))
+                deviceController.isChanged.postValue(true);
         } catch (Exception e)
         {
             Log.e("RadioCircuitCubeBTLE", "Exception: " + e.toString(), e);
