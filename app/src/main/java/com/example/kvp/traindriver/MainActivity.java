@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+import com.example.kvp.traindriver.config.SetupActivity;
 import com.example.kvp.traindriver.running.RunningActivity;
 
 public class MainActivity extends AppCompatActivity
@@ -19,9 +20,15 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
 
         Button btnRun = findViewById(R.id.mainRunButton);
-        btnRun.setOnClickListener((View view) ->
+        Button btnSetup = findViewById(R.id.mainSetupButton);
+        btnRun.setOnClickListener(view ->
         {
             Intent intent = new Intent(view.getContext(), RunningActivity.class);
+            startActivity(intent);
+        });
+        btnSetup.setOnClickListener(view ->
+        {
+            Intent intent = new Intent(view.getContext(), SetupActivity.class);
             startActivity(intent);
         });
 
