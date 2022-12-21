@@ -130,7 +130,7 @@ public class RunningDeviceAdapter extends RecyclerView.Adapter<RunningDeviceAdap
                 {
                 }
             });
-            dc.isChanged.observeForever(isChanged ->
+            dc.isChanged.observeForever(isChanged -> // TODO!!! change this to lifecycle support
             {
                 if (dc.chargePercent == -1)
                 {
