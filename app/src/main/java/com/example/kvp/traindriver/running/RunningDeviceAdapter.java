@@ -1,5 +1,7 @@
 package com.example.kvp.traindriver.running;
 
+import android.content.Context;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,8 +18,9 @@ import com.example.kvp.traindriver.R;
 
 public class RunningDeviceAdapter extends RecyclerView.Adapter<RunningDeviceAdapter.ViewHolder>
 {
-    int count;
-    ViewGroup viewGroup;
+    public ViewGroup viewGroup;
+    public AppCompatActivity owner;
+    public int count;
 
     public static class ViewHolder extends RecyclerView.ViewHolder
     {
@@ -40,8 +43,9 @@ public class RunningDeviceAdapter extends RecyclerView.Adapter<RunningDeviceAdap
         }
     }
 
-    public RunningDeviceAdapter(int count)
+    public RunningDeviceAdapter(AppCompatActivity owner, int count)
     {
+        this.owner = owner;
         this.count = count;
     }
 
@@ -130,7 +134,7 @@ public class RunningDeviceAdapter extends RecyclerView.Adapter<RunningDeviceAdap
                 {
                 }
             });
-            dc.isChanged.observeForever(isChanged -> // TODO!!! change this to lifecycle support
+            dc.isChanged.observe(owner, isChanged ->
             {
                 if (dc.chargePercent == -1)
                 {

@@ -29,7 +29,7 @@ public class RunningActivity extends AppCompatActivity
 
         RecyclerView rv = findViewById(R.id.runningRecyclerView);
         rv.setLayoutManager(new LinearLayoutManager(this));
-        rv.setAdapter(new RunningDeviceAdapter(MainContext.getMainContext(this).getDeviceCount()));
+        rv.setAdapter(new RunningDeviceAdapter(this, MainContext.getMainContext(this).getDeviceCount()));
         rv.getAdapter().notifyDataSetChanged();
         new Handler(getMainLooper()).postDelayed(() -> sendSpeed(), 100);
     }
