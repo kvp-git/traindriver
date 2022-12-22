@@ -1,7 +1,5 @@
 package com.example.kvp.traindriver.btscanner;
 
-import android.content.Context;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,7 +11,7 @@ import com.example.kvp.traindriver.R;
 
 public class BluetoothScanAdapter extends RecyclerView.Adapter<BluetoothScanAdapter.ViewHolder>
 {
-    AppCompatActivity activity;
+    BluetoothScanActivity activity;
     ViewGroup viewGroup;
     MainContext mainContext;
     int deviceNum;
@@ -29,7 +27,7 @@ public class BluetoothScanAdapter extends RecyclerView.Adapter<BluetoothScanAdap
         }
     }
 
-    public BluetoothScanAdapter(AppCompatActivity activity, int deviceNum)
+    public BluetoothScanAdapter(BluetoothScanActivity activity, int deviceNum)
     {
         this.activity = activity;
         mainContext = MainContext.getMainContext(activity);
@@ -55,7 +53,7 @@ public class BluetoothScanAdapter extends RecyclerView.Adapter<BluetoothScanAdap
             viewHolder.tvDeviceInfo.setOnClickListener(view ->
             {
                 mainContext.setEditableDeviceAddress(deviceNum, dev.name, dev.address);
-                activity.finish();
+                activity.done();
             });
         }
     }

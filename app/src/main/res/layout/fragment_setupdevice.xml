@@ -6,20 +6,21 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content" >
 
-
     <TextView
         android:id="@+id/setupDeviceTypeLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Type:"
+        android:layout_margin="10dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/setupDeviceAddressText" />
+        app:layout_constraintBottom_toBottomOf="@id/setupDeviceTypeSpinner" />
 
     <Spinner
         android:id="@+id/setupDeviceTypeSpinner"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_margin="10dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toRightOf="@id/setupDeviceTypeLabel" />
 
@@ -28,14 +29,16 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Channels:"
+        android:layout_margin="10dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toRightOf="@id/setupDeviceTypeSpinner"
-        app:layout_constraintBottom_toTopOf="@id/setupDeviceAddressText" />
+        app:layout_constraintBottom_toBottomOf="@id/setupDeviceChannelsSpinner" />
 
     <Spinner
         android:id="@+id/setupDeviceChannelsSpinner"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_margin="10dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toRightOf="@id/setupDeviceChannelsLabel" />
 

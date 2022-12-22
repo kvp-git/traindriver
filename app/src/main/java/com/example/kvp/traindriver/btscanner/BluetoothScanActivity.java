@@ -83,4 +83,16 @@ public class BluetoothScanActivity extends AppCompatActivity
         }
     };
 
+    public void done()
+    {
+        btScanner.stopScan(leScanCallback);
+        finish();
+    }
+
+    @Override
+    public void onBackPressed()
+    {
+        done();
+    }
+
 }
