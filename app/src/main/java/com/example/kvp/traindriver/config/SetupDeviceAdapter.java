@@ -1,6 +1,8 @@
 package com.example.kvp.traindriver.config;
 
 import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +16,7 @@ import android.widget.Spinner;
 import com.example.kvp.traindriver.DeviceDescriptor;
 import com.example.kvp.traindriver.MainContext;
 import com.example.kvp.traindriver.R;
+import com.example.kvp.traindriver.btscanner.BluetoothScanActivity;
 
 public class SetupDeviceAdapter extends RecyclerView.Adapter<SetupDeviceAdapter.ViewHolder>
 {
@@ -48,7 +51,6 @@ public class SetupDeviceAdapter extends RecyclerView.Adapter<SetupDeviceAdapter.
     {
         this.context = context;
         mainContext = MainContext.getMainContext(context);
-        mainContext.loadEditableDevices();
     }
 
     @Override
@@ -61,7 +63,7 @@ public class SetupDeviceAdapter extends RecyclerView.Adapter<SetupDeviceAdapter.
     }
 
     @Override
-    public void onBindViewHolder(SetupDeviceAdapter.ViewHolder viewHolder, int position)
+    public void onBindViewHolder(ViewHolder viewHolder, int position)
     {
         DeviceDescriptor deviceDescriptor = mainContext.getEditableDevices().get(position);
 
@@ -113,7 +115,13 @@ public class SetupDeviceAdapter extends RecyclerView.Adapter<SetupDeviceAdapter.
         viewHolder.etAddress.setText(deviceDescriptor.address);
         viewHolder.etName.setText(deviceDescriptor.name);
         viewHolder.btSearch.setOnClickListener(view ->
-                {/* TODO!!! */});
+        {
+            Intent intent = new Intent(view.getContext(), BluetoothScanActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putInt("deviceNumber", position);
+            intent.putExtras(bundle);
+            context.startActivity(intent);
+        });
         viewHolder.btDelete.setOnClickListener(view ->
                 mainContext.deleteEditableDevice(position));
     }

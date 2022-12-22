@@ -13,11 +13,13 @@ import com.example.kvp.traindriver.running.RunningActivity;
 
 public class MainActivity extends AppCompatActivity
 {
+    MainContext mainContext;
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mainContext = MainContext.getMainContext(this);
 
         Button btnRun = findViewById(R.id.mainRunButton);
         Button btnSetup = findViewById(R.id.mainSetupButton);
@@ -28,6 +30,7 @@ public class MainActivity extends AppCompatActivity
         });
         btnSetup.setOnClickListener(view ->
         {
+            mainContext.loadEditableDevices();
             Intent intent = new Intent(view.getContext(), SetupActivity.class);
             startActivity(intent);
         });

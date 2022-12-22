@@ -1,8 +1,12 @@
 package com.example.kvp.traindriver;
 
 import android.arch.lifecycle.MutableLiveData;
+import android.bluetooth.BluetoothClass;
+import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.util.Log;
+
+import com.example.kvp.traindriver.btscanner.BluetoothDeviceDescriptor;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -20,10 +24,12 @@ public class MainContext
 
     private ArrayList<DeviceController> devices;
     private MutableLiveData<ArrayList<DeviceDescriptor>> editableDeviceList;
+    private MutableLiveData<ArrayList<BluetoothDeviceDescriptor>> bluetoothDeviceList;
 
     public MainContext(Context context)
     {
         editableDeviceList = new MutableLiveData<>();
+        bluetoothDeviceList = new MutableLiveData<>();
         devices = new ArrayList<>();
         devices.add(new DeviceController(context, new DeviceDescriptor("test1", "sbrick_btle", "00:11:22:33:FF:EE", 4, "A,B,C,D")));
         devices.add(new DeviceController(context, new DeviceDescriptor("test2", "circuitcube_btle", "FC:58:FA:CF:62:70", 3, "A,B,C")));
@@ -61,6 +67,11 @@ public class MainContext
         editableDeviceList.setValue(list);
     }
 
+    public void saveEditableDevices()
+    {
+        // TODO!!!
+    }
+
     public ArrayList<DeviceDescriptor> getEditableDevices()
     {
         return editableDeviceList.getValue();
@@ -87,9 +98,56 @@ public class MainContext
         editableDeviceList.setValue(list);
     }
 
-    public void saveEditableDevices()
+    public void setEditableDeviceAddress(int index, String name, String address)
     {
-        // TODO!!!
+        ArrayList<DeviceDescriptor> list = editableDeviceList.getValue();
+        if ((index < 0) || (index >= list.size()))
+            return;
+        DeviceDescriptor descriptor = list.get(index);
+        descriptor.name = name;
+        descriptor.address = address;
+        editableDeviceList.setValue(list);
+    }
+
+    public MutableLiveData<ArrayList<BluetoothDeviceDescriptor>> watchBluetoothDeviceList()
+    {
+        return bluetoothDeviceList;
+    }
+
+    public void clearBluetoothDeviceList()
+    {
+        ArrayList<BluetoothDeviceDescriptor> list = new ArrayList<>();
+        bluetoothDeviceList.setValue(list);
+    }
+
+    public void addBluetoothDeviceList(String name, String address, String info)
+    {
+        ArrayList<BluetoothDeviceDescriptor> list = bluetoothDeviceList.getValue();
+        boolean found = false;
+        for (BluetoothDeviceDescriptor dev : list)
+            if (dev.address.compareTo(address) == 0)
+            {
+                found = true;
+                dev.name = name;
+                dev.info = info;
+            }
+        if (!found)
+            list.add(new BluetoothDeviceDescriptor(name, address, info));
+        bluetoothDeviceList.setValue(list);
+    }
+
+    public BluetoothDeviceDescriptor getBluetoothDeviceDescriptor(int position)
+    {
+        ArrayList<BluetoothDeviceDescriptor> list = bluetoothDeviceList.getValue();
+        if ((position < 0) || (position >= list.size()))
+            return null;
+        return list.get(position);
+    }
+
+    public int getBluetoothDeviceListSize()
+    {
+        ArrayList<BluetoothDeviceDescriptor> list = bluetoothDeviceList.getValue();
+        return list.size();
     }
 
 }
