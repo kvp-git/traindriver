@@ -32,8 +32,8 @@ public class BluetoothScanActivity extends AppCompatActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bluetooth_scan);
-        Button btStart = findViewById(R.id.scanStartButton);
-        Button btStop = findViewById(R.id.scanStopButton);
+        //Button btStart = findViewById(R.id.scanStartButton);
+        //Button btStop = findViewById(R.id.scanStopButton);
         RecyclerView rvResults = findViewById(R.id.scanRecyclerView);
         mainContext = MainContext.getMainContext(this);
         mainContext.clearBluetoothDeviceList();
@@ -45,6 +45,8 @@ public class BluetoothScanActivity extends AppCompatActivity
             btManager = (BluetoothManager)getSystemService(Context.BLUETOOTH_SERVICE);
             btAdapter = btManager.getAdapter();
             btScanner = btAdapter.getBluetoothLeScanner();
+            Log.i("BluetoothScanActivity", "Starting BTLE scanning...");
+            btScanner.startScan(leScanCallback);
         } catch(Exception e)
         {
             Log.e("BluetoothScanActivity", "Error: " + e.toString(), e);
@@ -54,7 +56,7 @@ public class BluetoothScanActivity extends AppCompatActivity
         rvResults.setAdapter(new BluetoothScanAdapter(this, deviceNumber));
         mainContext.watchBluetoothDeviceList().observe(this, list ->
                 rvResults.getAdapter().notifyDataSetChanged());
-        btStop.setEnabled(false);
+        /*btStop.setEnabled(false);
         btStart.setOnClickListener(view ->
         {
             btScanner.startScan(leScanCallback);
@@ -64,7 +66,7 @@ public class BluetoothScanActivity extends AppCompatActivity
         {
             btScanner.stopScan(leScanCallback);
             btStop.setEnabled(false);
-        });
+        });*/
     }
 
     private ScanCallback leScanCallback = new ScanCallback()
@@ -85,6 +87,7 @@ public class BluetoothScanActivity extends AppCompatActivity
 
     public void done()
     {
+        Log.i("BluetoothScanActivity", "Stopping BTLE scanning.");
         btScanner.stopScan(leScanCallback);
         finish();
     }
