@@ -62,11 +62,6 @@ public class MainContext
             return false;
         }
         return true;
-        /*
-        devices.add(new DeviceController(context, new DeviceDescriptor("test1", "sbrick_btle", "00:11:22:33:FF:EE", 4, "A,B,C,D")));
-        devices.add(new DeviceController(context, new DeviceDescriptor("test2", "circuitcube_btle", "FC:58:FA:CF:62:70", 3, "A,B,C")));
-        devices.add(new DeviceController(context, new DeviceDescriptor("test3", "circuitcube_btle", "FC:58:FA:CF:62:70", 2, "AC,B")));
-        */
     }
 
     public DeviceController getDeviceControllerById(int id)
