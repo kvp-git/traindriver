@@ -16,6 +16,7 @@ public class RadioSbrickBTLE implements RadioInterface, BtLECallbacks
     public RadioSbrickBTLE(Context context, DeviceDescriptor deviceDescriptor, DeviceController deviceController)
     {
         this.deviceDescriptor = deviceDescriptor;
+        this.deviceController = deviceController;
         btLE = new BtLE(context, this);
     }
 
@@ -73,12 +74,14 @@ public class RadioSbrickBTLE implements RadioInterface, BtLECallbacks
         cmd[0] = 0x0d; // watchdog timeout
         cmd[1] = 50; // 5 seconds
         btLE.writeCommand(0, cmd);
+        deviceController.isChanged.postValue(true);
     }
 
     @Override
     public void disconnected()
     {
         deviceController.isConnected = false;
+        deviceController.isChanged.postValue(true);
     }
 
     @Override
