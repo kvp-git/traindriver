@@ -64,7 +64,7 @@ public class RunningDeviceAdapter extends RecyclerView.Adapter<RunningDeviceAdap
         DeviceController dc = MainContext.getMainContext(viewGroup.getContext()).getDeviceControllerById(position);
         int channelCount = dc.deviceDescriptor.channelCount;
         viewHolder.tvName.setText(dc.deviceDescriptor.name);
-        viewHolder.tvAddress.setText(dc.deviceDescriptor.protocol  + ":" + dc.deviceDescriptor.address);
+        viewHolder.tvAddress.setText(dc.deviceDescriptor.protocol  + ":\n" + dc.deviceDescriptor.address);
         viewHolder.isConnected = false;
         viewHolder.bConnect.setText("Connect");
         viewHolder.bConnect.setOnClickListener(view ->
