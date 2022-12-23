@@ -20,6 +20,7 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mainContext = MainContext.getMainContext(this);
+        mainContext.loadDevices(this);
 
         Button btnRun = findViewById(R.id.mainRunButton);
         Button btnSetup = findViewById(R.id.mainSetupButton);

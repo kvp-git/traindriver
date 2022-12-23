@@ -30,6 +30,6 @@ public class SetupActivity extends AppCompatActivity
         btAdd.setOnClickListener(view ->
                 mainContext.addEditableDevice());
         btSave.setOnClickListener(view ->
-                mainContext.saveEditableDevices());
+                mainContext.saveEditableDevices(this));
     }
 }
