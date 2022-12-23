@@ -2,7 +2,6 @@ package com.example.kvp.traindriver;
 
 import android.content.Context;
 
-import java.util.Collections;
 /*
 service "4dc591b0-857c-41de-b5f1-15abda665b0c"
 command "2b8cbcc-0e25-4bda-8790-a15f53e6010f"
