@@ -36,8 +36,19 @@ public class MainActivity extends AppCompatActivity
             startActivity(intent);
         });
 
-        String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION};
-        if (checkSelfPermission(permissions[0]) != PackageManager.PERMISSION_GRANTED)
+        String[] permissions =
+        {
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.BLUETOOTH,
+            Manifest.permission.BLUETOOTH_ADMIN,
+            Manifest.permission.BLUETOOTH_PRIVILEGED,
+        };
+        boolean isNeeded = false;
+        for (int t = 0; t < permissions.length; t++)
+            if (checkSelfPermission(permissions[t]) != PackageManager.PERMISSION_GRANTED)
+                isNeeded = true;
+        if (isNeeded)
             requestPermissions(permissions, 0);
     }
 }
