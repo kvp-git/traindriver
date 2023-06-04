@@ -162,8 +162,8 @@ public class RadioCircuitCubeBTLE implements RadioInterface, BtLECallbacks
             float batteryVoltage = Float.parseFloat(batteryString);
             deviceController.batteryVoltage = batteryVoltage;
             if ((batteryVoltage >= 3.6) && (batteryVoltage <= 4.2))
-                deviceController.chargePercent = (int)(((batteryVoltage - 3.6) * 100.0) / 0.6);
-            else if (batteryVoltage > 4.2)
+                deviceController.chargePercent = (int)(((batteryVoltage - 3.6) * 100.0) / 0.4);
+            else if (batteryVoltage > 4.0)
                 deviceController.chargePercent = 100;
             else
                 deviceController.chargePercent = 0;
