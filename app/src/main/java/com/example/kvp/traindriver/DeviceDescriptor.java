@@ -49,6 +49,8 @@ public class DeviceDescriptor
             case "circuitcube_btle":
                 list.add("A,B,C");
                 list.add("AC,B");
+                list.add("AB,C");
+                list.add("A,BC");
                 break;
         }
         return list;
@@ -62,6 +64,8 @@ public class DeviceDescriptor
             case "AB,C,D": return 3;
             case "A,B,C": return 3;
             case "AC,B": return 2;
+            case "AB,C": return 2;
+            case "A,BC": return 2;
         }
         return 0;
     }
@@ -92,6 +96,8 @@ public class DeviceDescriptor
                 {
                     case "A,B,C": return 0;
                     case "AC,B": return 1;
+                    case "AB,C": return 2;
+                    case "A,BC": return 3;
                 }
                 break;
         }

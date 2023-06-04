@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -108,6 +110,43 @@ public class SetupDeviceAdapter extends RecyclerView.Adapter<SetupDeviceAdapter.
             }
             @Override
             public void onNothingSelected(AdapterView<?> adapterView)
+            {
+            }
+        });
+
+        viewHolder.etAddress.addTextChangedListener(new TextWatcher()
+        {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int start, int count, int after)
+            {
+            }
+            @Override
+            public void onTextChanged(CharSequence charSequence, int start, int before, int count)
+            {
+                String text = charSequence.toString();
+                String newAddress = text.toUpperCase();
+                if (deviceDescriptor.address.compareTo(newAddress) != 0)
+                    deviceDescriptor.address = newAddress;
+            }
+            @Override
+            public void afterTextChanged(Editable editable)
+            {
+            }
+        });
+
+        viewHolder.etName.addTextChangedListener(new TextWatcher()
+        {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int start, int count, int after)
+            {
+            }
+            @Override
+            public void onTextChanged(CharSequence charSequence, int start, int before, int count)
+            {
+                deviceDescriptor.name = charSequence.toString();
+            }
+            @Override
+            public void afterTextChanged(Editable editable)
             {
             }
         });

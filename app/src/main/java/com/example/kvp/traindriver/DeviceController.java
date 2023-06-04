@@ -77,6 +77,20 @@ public class DeviceController
                         return false;
                 }
                 return true;
+            case "A,BC":
+                switch (channelNum)
+                {
+                    case 0:
+                        channels[0] = value;
+                        break;
+                    case 1:
+                        channels[1] = value;
+                        channels[2] = value;
+                        break;
+                    default:
+                        return false;
+                }
+                return true;
             case "AC,B":
                 switch (channelNum)
                 {
