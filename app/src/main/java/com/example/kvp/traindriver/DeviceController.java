@@ -122,6 +122,23 @@ public class DeviceController
                         return false;
                 }
                 return true;
+            case "AB-,C,D":
+                switch (channelNum)
+                {
+                    case 0:
+                        channels[0] = value;
+                        channels[1] = -value;
+                        break;
+                    case 1:
+                        channels[2] = value;
+                        break;
+                    case 2:
+                        channels[3] = value;
+                        break;
+                    default:
+                        return false;
+                }
+                return true;
             // TODO!!! other configs
             default: // unsupported channel config
                 return false;

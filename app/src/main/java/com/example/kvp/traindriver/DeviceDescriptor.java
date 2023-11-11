@@ -45,6 +45,7 @@ public class DeviceDescriptor
             case "sbrick_btle":
                 list.add("A,B,C,D");
                 list.add("AB,C,D");
+                list.add("AB-,C,D");
                 break;
             case "circuitcube_btle":
                 list.add("A,B,C");
@@ -62,6 +63,7 @@ public class DeviceDescriptor
         {
             case "A,B,C,D": return 4;
             case "AB,C,D": return 3;
+            case "AB-,C,D": return 3;
             case "A,B,C": return 3;
             case "AC,B": return 2;
             case "AB,C": return 2;
@@ -89,6 +91,7 @@ public class DeviceDescriptor
                 {
                     case "A,B,C,D": return 0;
                     case "AB,C,D": return 1;
+                    case "AB-,C,D": return 2;
                 }
                 break;
             case "circuitcube_btle":
