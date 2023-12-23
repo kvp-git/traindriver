@@ -21,12 +21,13 @@ battery level:
 
 public class RadioCircuitCubeBTLE implements RadioInterface, BtLECallbacks
 {
-    DeviceDescriptor deviceDescriptor;
-    DeviceController deviceController;
-    boolean speedSentFlag;
-    boolean batterySentFlag;
-    BtLE btLE;
-    String batteryDebugString;
+    private static String LOGTAG = "RadioCircuitCubeBTLE";
+    private DeviceDescriptor deviceDescriptor;
+    private DeviceController deviceController;
+    private boolean speedSentFlag;
+    private boolean batterySentFlag;
+    private BtLE btLE;
+    private String batteryDebugString;
 
     public RadioCircuitCubeBTLE(Context context, DeviceDescriptor deviceDescriptor, DeviceController deviceController)
     {
@@ -50,7 +51,7 @@ public class RadioCircuitCubeBTLE implements RadioInterface, BtLECallbacks
                             "6e400003-b5a3-f393-e0a9-e50e24dcca9e"});  // receive
         } catch (Exception e)
         {
-            Log.e("RadioCircuitCubeBTLE", "Exception: " + e.toString(), e);
+            Log.e(LOGTAG, "Exception: " + e.toString(), e);
             return false;
         }
     }
@@ -63,7 +64,7 @@ public class RadioCircuitCubeBTLE implements RadioInterface, BtLECallbacks
             return btLE.disconnect();
         } catch (Exception e)
         {
-            Log.e("RadioCircuitCubeBTLE", "Exception: " + e.toString(), e);
+            Log.e(LOGTAG, "Exception: " + e.toString(), e);
             return false;
         }
     }
@@ -71,7 +72,7 @@ public class RadioCircuitCubeBTLE implements RadioInterface, BtLECallbacks
     @Override
     public boolean setChannels(Context context)
     {
-        Log.d("RadioCircuitCubeBTLE", "sending updates for " + deviceDescriptor.address);
+        Log.d(LOGTAG, "sending updates for " + deviceDescriptor.address);
         if (deviceController.channels.length < 3)
             return false;
         byte cmd[] = new byte[15];
@@ -87,10 +88,10 @@ public class RadioCircuitCubeBTLE implements RadioInterface, BtLECallbacks
             cmd[t * 5 + 3] = (byte)(('0') + (v % 10));
             cmd[t * 5 + 4] = (byte)('a' + t);
         }
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (int t = 0; t < cmd.length; t++)
             sb.append((char)cmd[t]);
-        Log.i("RadioCircuitCubeBTLE", "data: " + sb.toString());
+        Log.i(LOGTAG, "data: " + sb.toString());
         speedSentFlag = true;
         return btLE.writeCommand(0, cmd);
     }
@@ -156,7 +157,7 @@ public class RadioCircuitCubeBTLE implements RadioInterface, BtLECallbacks
             float v0 = deviceController.batteryVoltage;
             if (batteryString.compareTo(batteryDebugString) != 0)
             {
-                Log.d("RadioCircuitCubeBTLE", "new data: " + batteryString);
+                Log.d(LOGTAG, "new data: " + batteryString);
                 batteryDebugString = batteryString;
             }
             float batteryVoltage = Float.parseFloat(batteryString);
@@ -167,12 +168,12 @@ public class RadioCircuitCubeBTLE implements RadioInterface, BtLECallbacks
                 deviceController.chargePercent = 100;
             else
                 deviceController.chargePercent = 0;
-            Log.i("RadioCircuitCubeBTLE", "battery=" + deviceController.batteryVoltage + "V " + deviceController.chargePercent + "%");
+            Log.i(LOGTAG, "battery=" + deviceController.batteryVoltage + "V " + deviceController.chargePercent + "%");
             if ((c0 != deviceController.chargePercent) || (v0 != deviceController.batteryVoltage))
                 deviceController.isChanged.postValue(true);
         } catch (Exception e)
         {
-            Log.e("RadioCircuitCubeBTLE", "Exception: " + e.toString(), e);
+            Log.e(LOGTAG, "Exception: " + e.toString(), e);
         }
     }
 }

@@ -15,6 +15,7 @@ import java.util.UUID;
 
 public class BtLE
 {
+    private static String LOGTAG = "BtLE";
     public Context context;
     private BluetoothManager btManager;
     private BluetoothAdapter btAdapter;
@@ -65,13 +66,13 @@ public class BtLE
                         s = "" + newState;
                         break;
                 }
-                Log.e("BtLE", "onConnectionStateChange status=" + status + " newState=" + s);
+                Log.e(LOGTAG, "onConnectionStateChange status=" + status + " newState=" + s);
             }
 
             @Override
             public void onServicesDiscovered(BluetoothGatt gatt, int status)
             {
-                Log.e("BtLE", "onServicesDiscovered status=" + status);
+                Log.e(LOGTAG, "onServicesDiscovered status=" + status);
                 gattService = btGatt.getService(UUID.fromString(serviceUUID));
                 gattCharacteristics = new BluetoothGattCharacteristic[characteristicsUUID.length];
                 if (gattService == null)
@@ -83,14 +84,14 @@ public class BtLE
                         disconnect();
                 }
                 btReady = true;
-                Log.e("BtLE", "READY: " + address);
+                Log.e(LOGTAG, "READY: " + address);
                 btLECallbacks.connected();
             }
 
             @Override
             public void onCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status)
             {
-                //Log.d("BtLE", "onCharacteristicRead(" + status + ")");
+                //Log.d(LOGTAG, "onCharacteristicRead(" + status + ")");
                 // TODO!!! status and error handling
                 int num = -1; // TODO!!! look up the right characteristic number
                 btLECallbacks.readDone(status, num, characteristic.getValue());
@@ -99,7 +100,7 @@ public class BtLE
             @Override
             public void onCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status)
             {
-                //Log.e("BtLE", "onCharacteristicWrite(" + status + ")");
+                //Log.e(LOGTAG, "onCharacteristicWrite(" + status + ")");
                 // TODO!!! status and error handling
                 btLECallbacks.writeDone(status);
             }
@@ -107,7 +108,7 @@ public class BtLE
             @Override
             public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic)
             {
-                //Log.d("BtLE", "onCharacteristicChanged()");
+                //Log.d(LOGTAG, "onCharacteristicChanged()");
                 int num = -1; // TODO!!! look up the right characteristic number
                 btLECallbacks.dataChanged(num, characteristic.getValue());
             }

@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.example.kvp.traindriver.DeviceController;
 import com.example.kvp.traindriver.MainContext;
 import com.example.kvp.traindriver.R;
+import com.example.kvp.traindriver.settings.SettingsActivity;
 
 public class RunningDeviceAdapter extends RecyclerView.Adapter<RunningDeviceAdapter.ViewHolder>
 {
@@ -75,9 +76,10 @@ public class RunningDeviceAdapter extends RecyclerView.Adapter<RunningDeviceAdap
                 dc.disconnect(viewGroup.getContext());
         });
         viewHolder.directionCycles = new int[channelCount];
+        int fragmentChannelID = (SettingsActivity.isCompactMode(viewGroup.getContext()) ? R.layout.fragment_channel_compact : R.layout.fragment_channel);
         for (int t = 0; t < channelCount; t++)
         {
-            View chView = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.fragment_channel, viewHolder.llChannels, false);
+            View chView = LayoutInflater.from(viewGroup.getContext()).inflate(fragmentChannelID, viewHolder.llChannels, false);
             viewHolder.llChannels.addView(chView);
             SeekBar speedBar = chView.findViewById(R.id.channelValueBar);
             Button dirButton = chView.findViewById(R.id.channelDirectionButton);

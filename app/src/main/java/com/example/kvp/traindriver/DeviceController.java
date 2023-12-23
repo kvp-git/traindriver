@@ -6,6 +6,8 @@ import android.util.Log;
 
 public class DeviceController
 {
+    private static String LOGTAG = "DeviceController";
+    public static int CHANNEL_UNUSED = -256;
     public DeviceDescriptor deviceDescriptor;
     public int channels[];
     public float batteryVoltage;
@@ -32,7 +34,9 @@ public class DeviceController
                 radio = new RadioCircuitCubeBTLE(context, deviceDescriptor, this);
                 break;
             case "lego_btle":
-                channels = new int[2];
+                channels = new int[4];
+                channels[2] = CHANNEL_UNUSED;
+                channels[3] = CHANNEL_UNUSED;
                 radio = new RadioLegoPU(context, deviceDescriptor, this);
                 break;
             case "kvp_utp":
@@ -57,7 +61,7 @@ public class DeviceController
     }
     public boolean setChannel(Context context, int channelNum, int value)
     {
-        Log.e("DeviceController", "channelNum=" + channelNum + " value=" + value + " setup=" + deviceDescriptor.channelSetup);
+        Log.e(LOGTAG, "channelNum=" + channelNum + " value=" + value + " setup=" + deviceDescriptor.channelSetup);
         switch (deviceDescriptor.channelSetup.toUpperCase())
         {
             case "A,B":
@@ -93,6 +97,20 @@ public class DeviceController
                     case 0:
                         channels[0] = value;
                         channels[1] = value;
+                        break;
+                    case 1:
+                        channels[2] = value;
+                        break;
+                    default:
+                        return false;
+                }
+                return true;
+            case "A-B,C":
+                switch (channelNum)
+                {
+                    case 0:
+                        channels[0] = value;
+                        channels[1] = -value;
                         break;
                     case 1:
                         channels[2] = value;

@@ -48,6 +48,9 @@ public class DeviceDescriptor
                 list.add("A,B");
                 list.add("AB");
                 list.add("A-B");
+                list.add("A,B,C");
+                list.add("AB,C");
+                list.add("A-B,C");
                 break;
             case "sbrick_btle":
             case "kvp_utp":
@@ -99,6 +102,9 @@ public class DeviceDescriptor
                     case "A,B": return 0;
                     case "AB": return 1;
                     case "A-B": return 2;
+                    case "A,B,C": return 3;
+                    case "AB,C": return 4;
+                    case "A-B,C": return 5;
                 }
                 break;
             case "sbrick_btle":

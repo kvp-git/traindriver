@@ -9,6 +9,7 @@ import android.widget.Button;
 
 import com.example.kvp.traindriver.config.SetupActivity;
 import com.example.kvp.traindriver.running.RunningActivity;
+import com.example.kvp.traindriver.settings.SettingsActivity;
 
 public class MainActivity extends AppCompatActivity
 {
@@ -23,6 +24,7 @@ public class MainActivity extends AppCompatActivity
 
         Button btnRun = findViewById(R.id.mainRunButton);
         Button btnSetup = findViewById(R.id.mainSetupButton);
+        Button btnSettings = findViewById(R.id.mainSettingsButton);
         btnRun.setOnClickListener(view ->
         {
             Intent intent = new Intent(view.getContext(), RunningActivity.class);
@@ -32,6 +34,11 @@ public class MainActivity extends AppCompatActivity
         {
             mainContext.loadEditableDevices();
             Intent intent = new Intent(view.getContext(), SetupActivity.class);
+            startActivity(intent);
+        });
+        btnSettings.setOnClickListener(view ->
+        {
+            Intent intent = new Intent(view.getContext(), SettingsActivity.class);
             startActivity(intent);
         });
 
