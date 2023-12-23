@@ -34,6 +34,8 @@ public class DeviceDescriptor
         ArrayList<String> list = new ArrayList<>();
         list.add("sbrick_btle");
         list.add("circuitcube_btle");
+        list.add("lego_btle");
+        list.add("kvp_utp");
         return list;
     }
 
@@ -42,7 +44,13 @@ public class DeviceDescriptor
         ArrayList<String> list = new ArrayList<>();
         switch (protocol)
         {
+            case "lego_btle":
+                list.add("A,B");
+                list.add("AB");
+                list.add("A-B");
+                break;
             case "sbrick_btle":
+            case "kvp_utp":
                 list.add("A,B,C,D");
                 list.add("AB,C,D");
                 list.add("AB-,C,D");
@@ -59,17 +67,14 @@ public class DeviceDescriptor
 
     public static int getChannelCount(String channelSetup)
     {
-        switch (channelSetup)
-        {
-            case "A,B,C,D": return 4;
-            case "AB,C,D": return 3;
-            case "AB-,C,D": return 3;
-            case "A,B,C": return 3;
-            case "AC,B": return 2;
-            case "AB,C": return 2;
-            case "A,BC": return 2;
-        }
-        return 0;
+        // == number of ','-s in string + 1
+        if (channelSetup.isEmpty())
+            return 0;
+        int cnt = 0;
+        for (int t = 0; t < channelSetup.length(); t++)
+            if (channelSetup.charAt(t) == ',')
+                cnt++;
+        return (cnt + 1);
     }
 
     public static int getTypeSelection(String protocol)
@@ -78,6 +83,8 @@ public class DeviceDescriptor
         {
             case "sbrick_btle": return 0;
             case "circuitcube_btle": return 1;
+            case "lego_btle": return 2;
+            case "kvp_utp": return 3;
         }
         return 0;
     }
@@ -86,7 +93,16 @@ public class DeviceDescriptor
     {
         switch (protocol)
         {
+            case "lego_btle":
+                switch (channelSetup)
+                {
+                    case "A,B": return 0;
+                    case "AB": return 1;
+                    case "A-B": return 2;
+                }
+                break;
             case "sbrick_btle":
+            case "kvp_utp":
                 switch (channelSetup)
                 {
                     case "A,B,C,D": return 0;

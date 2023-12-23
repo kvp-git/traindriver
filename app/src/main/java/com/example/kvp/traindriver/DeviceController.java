@@ -31,7 +31,14 @@ public class DeviceController
                 channels = new int[3];
                 radio = new RadioCircuitCubeBTLE(context, deviceDescriptor, this);
                 break;
-            // TODO!!! wifi
+            case "lego_btle":
+                channels = new int[2];
+                radio = new RadioLegoPU(context, deviceDescriptor, this);
+                break;
+            case "kvp_utp":
+                channels = new int[4];
+                radio = new RadioKVPUTP(context, deviceDescriptor, this);
+                break;
             default:
                 throw new UnsupportedOperationException("Protocol not supported:" + deviceDescriptor.protocol);
         }
@@ -53,6 +60,23 @@ public class DeviceController
         Log.e("DeviceController", "channelNum=" + channelNum + " value=" + value + " setup=" + deviceDescriptor.channelSetup);
         switch (deviceDescriptor.channelSetup.toUpperCase())
         {
+            case "A,B":
+                if (channelNum > 1)
+                    return false;
+                channels[channelNum] = value;
+                return true;
+            case "AB":
+                if (channelNum > 0)
+                    return false;
+                channels[0] = value;
+                channels[1] = value;
+                return true;
+            case "A-B":
+                if (channelNum > 0)
+                    return false;
+                channels[0] = value;
+                channels[1] = -value;
+                return true;
             case "A,B,C":
                 if (channelNum > 2)
                     return false;

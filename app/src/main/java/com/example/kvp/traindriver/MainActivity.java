@@ -39,9 +39,11 @@ public class MainActivity extends AppCompatActivity
         {
             Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.ACCESS_LOCATION_EXTRA_COMMANDS,
             Manifest.permission.BLUETOOTH,
             Manifest.permission.BLUETOOTH_ADMIN,
             Manifest.permission.BLUETOOTH_PRIVILEGED,
+            Manifest.permission.INTERNET,
         };
         boolean isNeeded = false;
         for (int t = 0; t < permissions.length; t++)

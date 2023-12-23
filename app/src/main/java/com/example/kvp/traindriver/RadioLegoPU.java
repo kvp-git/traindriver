@@ -3,38 +3,18 @@ package com.example.kvp.traindriver;
 import android.content.Context;
 import android.util.Log;
 
-/*
-CIRCUIT_CUBE_SERVICE_UUID = "6e400001-b5a3-f393-e0a9-e50e24dcca9e";
-CIRCUIT_CUBE_TX_CHRACTERISITCS_UUID = "6e400002-b5a3-f393-e0a9-e50e24dcca9e";
-CIRCUIT_CUBE_RX_CHRACTERISITCS_UUID = "6e400003-b5a3-f393-e0a9-e50e24dcca9e";
-
-ascii protocol:
-
-output control:
- +000a+000b+000c
- +000a-255b+255c
-
-battery level:
- b -> 3.82
-
-*/
-
-public class RadioCircuitCubeBTLE implements RadioInterface, BtLECallbacks
+public class RadioLegoPU implements RadioInterface, BtLECallbacks
 {
-    DeviceDescriptor deviceDescriptor;
-    DeviceController deviceController;
-    boolean speedSentFlag;
-    boolean batterySentFlag;
-    BtLE btLE;
-    String batteryDebugString;
+    private DeviceDescriptor deviceDescriptor;
+    private DeviceController deviceController;
+    private BtLE btLE;
+    private int portWritten;
 
-    public RadioCircuitCubeBTLE(Context context, DeviceDescriptor deviceDescriptor, DeviceController deviceController)
+    public RadioLegoPU(Context context, DeviceDescriptor deviceDescriptor, DeviceController deviceController)
     {
         this.deviceDescriptor = deviceDescriptor;
         this.deviceController = deviceController;
-        speedSentFlag = false;
-        batterySentFlag = false;
-        batteryDebugString = "";
+        portWritten = -1;
         btLE = new BtLE(context, this);
     }
 
@@ -44,13 +24,11 @@ public class RadioCircuitCubeBTLE implements RadioInterface, BtLECallbacks
         try
         {
             return btLE.connect(context, deviceDescriptor.address,
-                    "6e400001-b5a3-f393-e0a9-e50e24dcca9e", // command
-                    new String[]{
-                            "6e400002-b5a3-f393-e0a9-e50e24dcca9e",    // transmit
-                            "6e400003-b5a3-f393-e0a9-e50e24dcca9e"});  // receive
+                    "00001623-1212-EFDE-1623-785FEABCD123",
+                    new String[]{"00001624-1212-EFDE-1623-785FEABCD123"});
         } catch (Exception e)
         {
-            Log.e("RadioCircuitCubeBTLE", "Exception: " + e.toString(), e);
+            Log.e("RadioLegoPU", "Exception: " + e.toString(), e);
             return false;
         }
     }
@@ -63,7 +41,7 @@ public class RadioCircuitCubeBTLE implements RadioInterface, BtLECallbacks
             return btLE.disconnect();
         } catch (Exception e)
         {
-            Log.e("RadioCircuitCubeBTLE", "Exception: " + e.toString(), e);
+            Log.e("RadioLegoPU", "Exception: " + e.toString(), e);
             return false;
         }
     }
@@ -71,36 +49,31 @@ public class RadioCircuitCubeBTLE implements RadioInterface, BtLECallbacks
     @Override
     public boolean setChannels(Context context)
     {
-        Log.d("RadioCircuitCubeBTLE", "sending updates for " + deviceDescriptor.address);
-        if (deviceController.channels.length < 3)
+        Log.d("RadioLegoPU", "sending updates for " + deviceDescriptor.address);
+        if (deviceController.channels.length < 2)
             return false;
-        byte cmd[] = new byte[15];
-        for (int t = 0; t < 3; t++)
-        {
-            int v = deviceController.channels[t];
-            //Log.d("RunningActivity", "channel=" + t + " value=" + v);
-            cmd[t * 5 + 0] = (byte)((v < 0) ? '-' : '+');
-            if (v < 0)
-                v *= -1;
-            cmd[t * 5 + 1] = (byte)(('0' + (v / 100)));
-            cmd[t * 5 + 2] = (byte)(('0') + ((v / 10) % 10));
-            cmd[t * 5 + 3] = (byte)(('0') + (v % 10));
-            cmd[t * 5 + 4] = (byte)('a' + t);
-        }
-        StringBuffer sb = new StringBuffer();
-        for (int t = 0; t < cmd.length; t++)
-            sb.append((char)cmd[t]);
-        Log.i("RadioCircuitCubeBTLE", "data: " + sb.toString());
-        speedSentFlag = true;
+        byte cmd[] = new byte[8];
+        cmd[0] = (byte)0x08; // length 8 bytes
+        cmd[1] = (byte)0x00; // hub 0
+        cmd[2] = (byte)0x81; // port write
+        cmd[3] = (byte)0x00; // port 0
+        cmd[4] = (byte)0x10; // immediate, no feedback
+        cmd[5] = (byte)0x51; // direct write
+        cmd[6] = (byte)0;    // 0x00
+        int v = deviceController.channels[0];
+        Log.d("RadioLegoPU", "channel=" + 0 + " value=" + v);
+        cmd[7] = (byte)((int)(v / 2.55));
+        portWritten = 0;
         return btLE.writeCommand(0, cmd);
     }
 
     @Override
     public boolean getChargePercent(Context context)
     {
-        byte cmd[] = new byte[1];
+        /*byte cmd[] = new byte[1];
         cmd[0] = 'b';
-        return btLE.writeCommand(0, cmd);
+        return btLE.writeCommand(0, cmd);*/
+        return false; // TODO!!!
     }
 
     @Override
@@ -126,16 +99,36 @@ public class RadioCircuitCubeBTLE implements RadioInterface, BtLECallbacks
     @Override
     public void writeDone(int status)
     {
-        if (speedSentFlag)
+        if (portWritten == 0)
         {
-            speedSentFlag = false;
-            batterySentFlag = true;
-            byte[] cmd = new byte[1];
-            cmd[0] = 'b';
+            byte cmd[] = new byte[8];
+            cmd[0] = (byte)0x08; // length 8 bytes
+            cmd[1] = (byte)0x00; // hub 0
+            cmd[2] = (byte)0x81; // port write
+            cmd[3] = (byte)0x01; // port 1
+            cmd[4] = (byte)0x10; // immediate, no feedback
+            cmd[5] = (byte)0x51; // direct write
+            cmd[6] = (byte)0;    // 0x00
+            int v = deviceController.channels[1];
+            Log.d("RadioLegoPU", "channel=" + 1 + " value=" + v);
+            cmd[7] = (byte)((int)(v / 2.55));
+            portWritten = 1;
             btLE.writeCommand(0, cmd);
-        } else if (batterySentFlag)
+        } else if (portWritten == 1)
         {
-            batterySentFlag = false;
+            byte cmd[] = new byte[8];
+            cmd[0] = (byte)0x08; // length 8 bytes
+            cmd[1] = (byte)0x00; // hub 0
+            cmd[2] = (byte)0x81; // port write
+            cmd[3] = (byte)50;   // port 50, internal rgb led
+            cmd[4] = (byte)0x10; // immediate, no feedback
+            cmd[5] = (byte)0x51; // direct write
+            cmd[6] = (byte)0x00; // 0x00
+            int v = deviceController.channels[1] & 7; // TODO!!! this is a test only
+            Log.d("RadioLegoPU", "channel=" + 50 + " value=" + v);
+            cmd[7] = (byte)v;
+            portWritten = 2;
+            btLE.writeCommand(0, cmd);
         }
     }
 
@@ -144,6 +137,9 @@ public class RadioCircuitCubeBTLE implements RadioInterface, BtLECallbacks
     {
         if (value.length < 1)
             return;
+        Log.d("RadioLegoPU", "incoming data size=" + value.length);
+        // TODO!!!
+        /*
         if (value[0] == 0x00) // filter out speed command ack-s
             return;
         StringBuffer sb = new StringBuffer();
@@ -174,5 +170,6 @@ public class RadioCircuitCubeBTLE implements RadioInterface, BtLECallbacks
         {
             Log.e("RadioCircuitCubeBTLE", "Exception: " + e.toString(), e);
         }
+        */
     }
 }
