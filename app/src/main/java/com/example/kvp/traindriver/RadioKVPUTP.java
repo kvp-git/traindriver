@@ -9,9 +9,11 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 
 /*
+  Packet size: 16 bytes
+     nc -u -l 3456 | hexdump -C
   Commands:
     0x01: set output channels
-      <uint8_t command>(<uint16_t channels>*4)<uint8_t>checksum
+      <uint8_t command>(<uint16_t channels>*4) ... <uint8_t>checksum
 
   Channels:
     Config 1: 4 motors
@@ -81,13 +83,18 @@ public class RadioKVPUTP implements RadioInterface
             Log.d(LOGTAG, "sending updates for " + deviceDescriptor.address);
             if (deviceController.channels.length < 4)
                 return false;
-            byte cmd[] = new byte[6];
+            byte cmd[] = new byte[16];
             cmd[0] = (byte)CMD_SET_CHANNELS;
             for (int t = 0; t < 4; t++)
-                cmd[1 + t] = (byte)deviceController.channels[t];;
-            cmd[1 + 4] = (byte)0xff;
+            {
+                int v = deviceController.channels[t];
+                //Log.d(LOGTAG, "channel:" + t + " value: " + v);
+                cmd[1 + t * 2] = (byte)(v & 0xff);
+                cmd[1 + t * 2 + 1] = (byte)((v >> 8) & 0xff);
+            }
+            cmd[cmd.length - 1] = (byte)0xff;
             for (int t = 0; t < (cmd.length - 1); t++)
-                cmd[1 + 4] ^= cmd[t];
+                cmd[cmd.length - 1] ^= cmd[t];
             StringBuilder sb = new StringBuilder();
             for (byte b : cmd)
                 sb.append(String.format(" %02X", b));
