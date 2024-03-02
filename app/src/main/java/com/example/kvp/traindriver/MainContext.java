@@ -3,7 +3,6 @@ package com.example.kvp.traindriver;
 import android.arch.lifecycle.MutableLiveData;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.JsonReader;
 import android.util.Log;
 
 import com.example.kvp.traindriver.btscanner.BluetoothDeviceDescriptor;
@@ -48,15 +47,35 @@ public class MainContext
             for (int n = 0; n < devs.length(); n++)
             {
                 JSONObject dev = devs.getJSONObject(n);
-                devices.add(new DeviceController(context, new DeviceDescriptor(
-                        dev.getString("name"),
-                        dev.getString("protocol"),
-                        dev.getString("address"),
-                        DeviceDescriptor.getChannelCount(dev.getString("channelSetup")),
-                        dev.getString("channelSetup")
-                )));
+                try
+                {
+                    devices.add(new DeviceController(context, new DeviceDescriptor(
+                            dev.getString("name"),
+                            dev.getString("protocol"),
+                            dev.getString("address"),
+                            dev.getString("password"),
+                            DeviceDescriptor.getChannelCount(dev.getString("channelSetup")),
+                            dev.getString("channelSetup")
+                    )));
+                } catch (JSONException f)
+                {
+                    try
+                    {
+                        devices.add(new DeviceController(context, new DeviceDescriptor(
+                                dev.getString("name"),
+                                dev.getString("protocol"),
+                                dev.getString("address"),
+                                "",
+                                DeviceDescriptor.getChannelCount(dev.getString("channelSetup")),
+                                dev.getString("channelSetup")
+                        )));
+                    } catch (JSONException g)
+                    {
+                        Log.e("MainContext", "Error loading device configurations: " + g.toString(), g);
+                    }
+                }
             }
-        } catch(JSONException e)
+        } catch (JSONException e)
         {
             Log.e("MainContext", "Error loading device configurations: " + e.toString(), e);
             return false;
@@ -107,6 +126,7 @@ public class MainContext
                 device.put("name", dd.name);
                 device.put("protocol", dd.protocol);
                 device.put("address", dd.address);
+                device.put("password", dd.password);
                 device.put("channelSetup", dd.channelSetup);
                 devList.put(device);
             }
@@ -140,7 +160,7 @@ public class MainContext
     public void addEditableDevice()
     {
         ArrayList<DeviceDescriptor> list = editableDeviceList.getValue();
-        list.add(new DeviceDescriptor("my device", "none", "11:22:33:44:55", 0, ""));
+        list.add(new DeviceDescriptor("my device", "none", "11:22:33:44:55", "pass", 0, ""));
         editableDeviceList.setValue(list);
     }
 

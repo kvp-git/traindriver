@@ -8,14 +8,16 @@ public class DeviceDescriptor
     public String name;
     public String protocol;
     public String address;
+    public String password;
     public int channelCount;
     public String channelSetup;
 
-    public DeviceDescriptor(String name, String protocol, String address, int channelCount, String channelSetup)
+    public DeviceDescriptor(String name, String protocol, String address, String password, int channelCount, String channelSetup)
     {
         this.name = name;
         this.protocol = protocol;
         this.address = address;
+        this.password = password;
         this.channelCount = channelCount;
         this.channelSetup = channelSetup;
     }
@@ -25,6 +27,7 @@ public class DeviceDescriptor
         this.name = dd.name;
         this.protocol = dd.protocol;
         this.address = dd.address;
+        this.password = dd.password;
         this.channelCount = dd.channelCount;
         this.channelSetup = dd.channelSetup;
     }
@@ -35,7 +38,8 @@ public class DeviceDescriptor
         list.add("sbrick_btle");
         list.add("circuitcube_btle");
         list.add("lego_btle");
-        list.add("kvp_utp");
+        list.add("kvp_utp_train");
+        list.add("kvp_utp_signal");
         return list;
     }
 
@@ -53,10 +57,13 @@ public class DeviceDescriptor
                 list.add("A-B,C");
                 break;
             case "sbrick_btle":
-            case "kvp_utp":
+            case "kvp_utp_train":
                 list.add("A,B,C,D");
                 list.add("AB,C,D");
                 list.add("AB-,C,D");
+                break;
+            case "kvp_utp_signal":
+                list.add("A"); // TODO!!! change this to signal select dropdown "[R,YY,YG,etc.]"
                 break;
             case "circuitcube_btle":
                 list.add("A,B,C");
@@ -87,7 +94,8 @@ public class DeviceDescriptor
             case "sbrick_btle": return 0;
             case "circuitcube_btle": return 1;
             case "lego_btle": return 2;
-            case "kvp_utp": return 3;
+            case "kvp_utp_train": return 3;
+            case "kvp_utp_signal": return 4;
         }
         return 0;
     }
@@ -108,12 +116,18 @@ public class DeviceDescriptor
                 }
                 break;
             case "sbrick_btle":
-            case "kvp_utp":
+            case "kvp_utp_train":
                 switch (channelSetup)
                 {
                     case "A,B,C,D": return 0;
                     case "AB,C,D": return 1;
                     case "AB-,C,D": return 2;
+                }
+                break;
+            case "kvp_utp_signal":
+                switch (channelSetup)
+                {
+                    case "A": return 0;
                 }
                 break;
             case "circuitcube_btle":

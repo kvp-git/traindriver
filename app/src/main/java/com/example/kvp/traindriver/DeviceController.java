@@ -39,9 +39,13 @@ public class DeviceController
                 channels[3] = CHANNEL_UNUSED;
                 radio = new RadioLegoPU(context, deviceDescriptor, this);
                 break;
-            case "kvp_utp":
+            case "kvp_utp_train":
                 channels = new int[4];
-                radio = new RadioKVPUTP(context, deviceDescriptor, this);
+                radio = new RadioKVPUTP(context, deviceDescriptor, this, RadioKVPUTP.TRAIN);
+                break;
+            case "kvp_utp_signal":
+                channels = new int[1];
+                radio = new RadioKVPUTP(context, deviceDescriptor, this, RadioKVPUTP.SIGNAL);
                 break;
             default:
                 throw new UnsupportedOperationException("Protocol not supported:" + deviceDescriptor.protocol);

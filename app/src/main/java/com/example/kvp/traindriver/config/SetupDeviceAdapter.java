@@ -32,6 +32,7 @@ public class SetupDeviceAdapter extends RecyclerView.Adapter<SetupDeviceAdapter.
         public Spinner spChannels;
         public EditText etAddress;
         public EditText etName;
+        public EditText etPassword;
         public Button btSearch;
         public Button btDelete;
         ArrayAdapter<String> typeAdapter;
@@ -44,6 +45,7 @@ public class SetupDeviceAdapter extends RecyclerView.Adapter<SetupDeviceAdapter.
             spChannels = view.findViewById(R.id.setupDeviceChannelsSpinner);
             etAddress = view.findViewById(R.id.setupDeviceAddressText);
             etName = view.findViewById(R.id.setupDeviceNameText);
+            etPassword = view.findViewById(R.id.setupDevicePasswordText);
             btSearch = view.findViewById(R.id.setupDeviceSearchButton);
             btDelete = view.findViewById(R.id.setupDeviceDeleteButton);
         }
@@ -150,9 +152,26 @@ public class SetupDeviceAdapter extends RecyclerView.Adapter<SetupDeviceAdapter.
             {
             }
         });
+        viewHolder.etPassword.addTextChangedListener(new TextWatcher()
+        {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int start, int count, int after)
+            {
+            }
+            @Override
+            public void onTextChanged(CharSequence charSequence, int start, int before, int count)
+            {
+                deviceDescriptor.password = charSequence.toString();
+            }
+            @Override
+            public void afterTextChanged(Editable editable)
+            {
+            }
+        });
 
         viewHolder.etAddress.setText(deviceDescriptor.address);
         viewHolder.etName.setText(deviceDescriptor.name);
+        viewHolder.etPassword.setText(deviceDescriptor.password);
         viewHolder.btSearch.setOnClickListener(view ->
         {
             Intent intent = new Intent(view.getContext(), BluetoothScanActivity.class);

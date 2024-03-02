@@ -9,6 +9,7 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 
 /*
+v1:
   Packet size: 16 bytes
      nc -u -l 3456 | hexdump -C
   Commands:
@@ -17,22 +18,46 @@ import java.net.InetAddress;
 
   Channels:
     Config 1: 4 motors
-    ...TODO!!!
+
+v2:
+  4 bytes magic id 'KVP '
+  2 bytes device family id
+  2 bytes command id
+  N bytes parameters
+  4 bytes salt
+  32 bytes SHA256
+
+Device family ids:
+  - 'WT' : wifi train controller
+  - 'WS' : wifi signal controller
+
+Commands:
+  - 'M1' : move motor v1 (WT): int16_t channels[4]
+  - 'S1' : signal set v1 (SW): uint8_t bits[2]
+
+Examples:
+  'KVP WTM1',channels[8],salt[4],hash[32]
+  'KVP WSS1',bits[2],salt[4],hash[32]
 */
 
 public class RadioKVPUTP implements RadioInterface
 {
+    public static int TRAIN = 1;
+    public static int SIGNAL = 2;
+
     private static String LOGTAG = "RadioKVPUTP";
     private static int devicePort = 3456;
     private static int CMD_SET_CHANNELS = 0x01;
     private DeviceDescriptor deviceDescriptor;
     private DeviceController deviceController;
     private DatagramSocket datagramSocket;
+    private int deviceType;
 
-    public RadioKVPUTP(Context context, DeviceDescriptor deviceDescriptor, DeviceController deviceController)
+    public RadioKVPUTP(Context context, DeviceDescriptor deviceDescriptor, DeviceController deviceController, int type)
     {
         this.deviceDescriptor = deviceDescriptor;
         this.deviceController = deviceController;
+        this.deviceType = type;
         if (android.os.Build.VERSION.SDK_INT > 9)
         {
             StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
@@ -63,7 +88,6 @@ public class RadioKVPUTP implements RadioInterface
     {
         try
         {
-
             datagramSocket.disconnect();
             deviceController.isConnected = false;
             deviceController.isChanged.postValue(true);
