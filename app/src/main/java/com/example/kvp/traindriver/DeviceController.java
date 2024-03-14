@@ -68,6 +68,11 @@ public class DeviceController
         Log.e(LOGTAG, "channelNum=" + channelNum + " value=" + value + " setup=" + deviceDescriptor.channelSetup);
         switch (deviceDescriptor.channelSetup.toUpperCase())
         {
+            case "A":
+                if (channelNum > 0)
+                    return false;
+                channels[channelNum] = value;
+                return true;
             case "A,B":
                 if (channelNum > 1)
                     return false;

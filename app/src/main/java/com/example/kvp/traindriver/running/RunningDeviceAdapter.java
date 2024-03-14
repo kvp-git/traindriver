@@ -76,6 +76,7 @@ public class RunningDeviceAdapter extends RecyclerView.Adapter<RunningDeviceAdap
                 dc.disconnect(viewGroup.getContext());
         });
         viewHolder.directionCycles = new int[channelCount];
+        viewHolder.llChannels.removeAllViews();
         int fragmentChannelID = (SettingsActivity.isCompactMode(viewGroup.getContext()) ? R.layout.fragment_channel_compact : R.layout.fragment_channel);
         for (int t = 0; t < channelCount; t++)
         {

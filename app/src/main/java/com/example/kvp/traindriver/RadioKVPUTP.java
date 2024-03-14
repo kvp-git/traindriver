@@ -60,6 +60,18 @@ public class RadioKVPUTP implements RadioInterface
     private DatagramSocket datagramSocket;
     private int deviceType;
 
+    /*
+      green  1h
+      yellow 2h
+      red    4h
+      yellow 8h
+      white 10h
+     */
+    private static final int signalPatterns[] =
+        {0x0404,0x0414,0x0200,0x0202,0x0A08,0x0A0A,0x0908,0x0909,0x0100,0x0101};
+    private static final String signalText[] =
+        {"R",   "RW",  "Y*",  "Y",   "Y*Y", "YY",  "G*Y", "GY",  "G*",  "G"};
+
     public RadioKVPUTP(Context context, DeviceDescriptor deviceDescriptor, DeviceController deviceController, int type)
     {
         this.deviceDescriptor = deviceDescriptor;
@@ -154,8 +166,14 @@ public class RadioKVPUTP implements RadioInterface
                     cmd = new byte[HDR_SIZE + S1_DATA_SIZE + SALT_SIZE + HASH_SIZE];
                     setHeader(cmd, "KVP WSS1");
                     int v = deviceController.channels[0];
-                    int p1 = 0xff; // TODO!!! value to bitmask (for testing only)
-                    int p2 = 0; // TODO!!! 2nd bitmask for blinking
+                    if (v < 0)
+                        v *= -1;
+                    int idx = (v * 9) / 255;
+                    if (idx >= signalPatterns.length)
+                        idx = signalPatterns.length - 1;
+                    int p1 = signalPatterns[idx] & 0xff;
+                    int p2 = (signalPatterns[idx] >>> 8) & 0xff;
+                    Log.d(LOGTAG, "signal: " + signalText[idx]);
                     cmd[HDR_SIZE] = (byte) (p1);
                     cmd[HDR_SIZE + 1] = (byte) (p2);
                     checksum(cmd);
