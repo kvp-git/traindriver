@@ -91,12 +91,14 @@ public class RunningDeviceAdapter extends RecyclerView.Adapter<RunningDeviceAdap
             dirButton.setOnClickListener(view ->
             {
                 viewHolder.directionCycles[channelNum] = (viewHolder.directionCycles[channelNum] + 1) % 4;
+                boolean isStop = false;
                 switch (viewHolder.directionCycles[channelNum])
                 {
                     case 0:
                     case 2:
                         dirButton.setText("Stop");
                         speedBar.setEnabled(false);
+                        isStop = true;
                         break;
                     case 1:
                         dirButton.setText("Forward");
@@ -108,6 +110,8 @@ public class RunningDeviceAdapter extends RecyclerView.Adapter<RunningDeviceAdap
                         break;
                 }
                 speedBar.setProgress(0);
+                //Log.d("RunningDeviceAdapter", "speed on " + channelNum + " set to 0 stop is " + (isStop ? "true" : "false"));
+                dc.setChannel(viewGroup.getContext(), channelNum, 0, isStop);
             });
             speedBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener()
             {
@@ -115,18 +119,21 @@ public class RunningDeviceAdapter extends RecyclerView.Adapter<RunningDeviceAdap
                 public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser)
                 {
                     int dir = 0;
+                    boolean isStop = true;
                     switch (viewHolder.directionCycles[channelNum])
                     {
                         case 1:
                             dir = 1;
+                            isStop = false;
                             break;
                         case 3:
                             dir = -1;
+                            isStop = false;
                             break;
                     }
                     int value = dir * progress;
-                    //Log.d("RunningDeviceAdapter", "speed on " + channelNum + " set to " + value);
-                    dc.setChannel(viewGroup.getContext(), channelNum, value);
+                    //Log.d("RunningDeviceAdapter", "speed on " + channelNum + " set to " + value + " stop is " + (isStop ? "true" : "false"));
+                    dc.setChannel(viewGroup.getContext(), channelNum, value, isStop);
                 }
                 @Override
                 public void onStartTrackingTouch(SeekBar seekBar)

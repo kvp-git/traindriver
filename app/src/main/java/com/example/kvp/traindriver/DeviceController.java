@@ -10,6 +10,7 @@ public class DeviceController
     public static int CHANNEL_UNUSED = -256;
     public DeviceDescriptor deviceDescriptor;
     public int channels[];
+    public boolean stopFlags[];
     public float batteryVoltage;
     public int chargePercent;
     public boolean isConnected;
@@ -50,6 +51,9 @@ public class DeviceController
             default:
                 throw new UnsupportedOperationException("Protocol not supported:" + deviceDescriptor.protocol);
         }
+        stopFlags = new boolean[channels.length];
+        for (int t = 0; t < stopFlags.length; t++)
+            stopFlags[t] = true;
     }
     public boolean connect(Context context)
     {
@@ -63,52 +67,63 @@ public class DeviceController
     {
         return radio.setChannels(context);
     }
-    public boolean setChannel(Context context, int channelNum, int value)
+    public boolean setChannel(Context context, int channelNum, int speed, boolean isStop)
     {
-        Log.e(LOGTAG, "channelNum=" + channelNum + " value=" + value + " setup=" + deviceDescriptor.channelSetup);
+        Log.e(LOGTAG, "channelNum=" + channelNum + " speed=" + speed + " stopFlag=" + isStop + " setup=" + deviceDescriptor.channelSetup);
         switch (deviceDescriptor.channelSetup.toUpperCase())
         {
             case "A":
                 if (channelNum > 0)
                     return false;
-                channels[channelNum] = value;
+                channels[channelNum] = speed;
+                stopFlags[channelNum] = isStop;
                 return true;
             case "A,B":
                 if (channelNum > 1)
                     return false;
-                channels[channelNum] = value;
+                channels[channelNum] = speed;
+                stopFlags[channelNum] = isStop;
                 return true;
             case "AB":
                 if (channelNum > 0)
                     return false;
-                channels[0] = value;
-                channels[1] = value;
+                channels[0] = speed;
+                channels[1] = speed;
+                stopFlags[0] = isStop;
+                stopFlags[1] = isStop;
                 return true;
             case "A-B":
                 if (channelNum > 0)
                     return false;
-                channels[0] = value;
-                channels[1] = -value;
+                channels[0] = speed;
+                channels[1] = -speed;
+                stopFlags[0] = isStop;
+                stopFlags[1] = isStop;
                 return true;
             case "A,B,C":
                 if (channelNum > 2)
                     return false;
-                channels[channelNum] = value;
+                channels[channelNum] = speed;
+                stopFlags[channelNum] = isStop;
                 return true;
             case "A,B,C,D":
                 if (channelNum > 3)
                     return false;
-                channels[channelNum] = value;
+                channels[channelNum] = speed;
+                stopFlags[channelNum] = isStop;
                 return true;
             case "AB,C":
                 switch (channelNum)
                 {
                     case 0:
-                        channels[0] = value;
-                        channels[1] = value;
+                        channels[0] = speed;
+                        channels[1] = speed;
+                        stopFlags[0] = isStop;
+                        stopFlags[1] = isStop;
                         break;
                     case 1:
-                        channels[2] = value;
+                        channels[2] = speed;
+                        stopFlags[2] = isStop;
                         break;
                     default:
                         return false;
@@ -118,11 +133,14 @@ public class DeviceController
                 switch (channelNum)
                 {
                     case 0:
-                        channels[0] = value;
-                        channels[1] = -value;
+                        channels[0] = speed;
+                        channels[1] = -speed;
+                        stopFlags[0] = isStop;
+                        stopFlags[1] = isStop;
                         break;
                     case 1:
-                        channels[2] = value;
+                        channels[2] = speed;
+                        stopFlags[2] = isStop;
                         break;
                     default:
                         return false;
@@ -132,11 +150,14 @@ public class DeviceController
                 switch (channelNum)
                 {
                     case 0:
-                        channels[0] = value;
+                        channels[0] = speed;
+                        stopFlags[0] = isStop;
                         break;
                     case 1:
-                        channels[1] = value;
-                        channels[2] = value;
+                        channels[1] = speed;
+                        channels[2] = speed;
+                        stopFlags[1] = isStop;
+                        stopFlags[2] = isStop;
                         break;
                     default:
                         return false;
@@ -146,11 +167,14 @@ public class DeviceController
                 switch (channelNum)
                 {
                     case 0:
-                        channels[0] = value;
-                        channels[2] = value;
+                        channels[0] = speed;
+                        channels[2] = speed;
+                        stopFlags[0] = isStop;
+                        stopFlags[2] = isStop;
                         break;
                     case 1:
-                        channels[1] = value;
+                        channels[1] = speed;
+                        stopFlags[1] = isStop;
                         break;
                     default:
                         return false;
@@ -160,14 +184,18 @@ public class DeviceController
                 switch (channelNum)
                 {
                     case 0:
-                        channels[0] = value;
-                        channels[1] = value;
+                        channels[0] = speed;
+                        channels[1] = speed;
+                        stopFlags[0] = isStop;
+                        stopFlags[1] = isStop;
                         break;
                     case 1:
-                        channels[2] = value;
+                        channels[2] = speed;
+                        stopFlags[2] = isStop;
                         break;
                     case 2:
-                        channels[3] = value;
+                        channels[3] = speed;
+                        stopFlags[3] = isStop;
                         break;
                     default:
                         return false;
@@ -177,14 +205,18 @@ public class DeviceController
                 switch (channelNum)
                 {
                     case 0:
-                        channels[0] = value;
-                        channels[1] = -value;
+                        channels[0] = speed;
+                        channels[1] = -speed;
+                        stopFlags[0] = isStop;
+                        stopFlags[1] = isStop;
                         break;
                     case 1:
-                        channels[2] = value;
+                        channels[2] = speed;
+                        stopFlags[2] = isStop;
                         break;
                     case 2:
-                        channels[3] = value;
+                        channels[3] = speed;
+                        stopFlags[3] = isStop;
                         break;
                     default:
                         return false;

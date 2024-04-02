@@ -154,7 +154,10 @@ public class RadioKVPUTP implements RadioInterface
                     for (int t = 0; t < 4; t++)
                     {
                         int v = deviceController.channels[t];
-                        //Log.d(LOGTAG, "channel:" + t + " value: " + v);
+                        boolean b = deviceController.stopFlags[t];
+                        if (b)
+                            v = 0x8000; // send brake command with -32768 (-32767 <= speed <= 32767)
+                        Log.d(LOGTAG, "channel:" + t + " value: " + v);
                         cmd[HDR_SIZE + t * 2] = (byte) (v & 0xFF);
                         cmd[HDR_SIZE + t * 2 + 1] = (byte) ((v >> 8) & 0xFF);
                     }
